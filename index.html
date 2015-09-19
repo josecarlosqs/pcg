@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Asientos</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="rec/sweetalert2.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+        <div>
+
+              <!-- Nav tabs -->
+              <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#formulario" aria-controls="formulario" role="tab" data-toggle="tab">Formulario</a></li>
+                <li role="presentation"><a href="#asientos" aria-controls="asientos" role="tab" data-toggle="tab">Asientos</a></li>
+              </ul>
+
+              <!-- Tab panes -->
+              <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="formulario"><div class="row" id="pBotones"></div></div>
+                <div role="tabpanel" class="tab-pane" id="asientos"><div class="row">
+
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th width="5%">#</th>
+                          <th width="55%">Asiento</th>
+                          <th width="20%">Debe</th>
+                          <th width="20%">Haber</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">1</th>
+                          <td>Mark</td>
+                          <td>Otto</td>
+                          <td>@mdo</td>
+                        </tr>
+                        <tr>
+                      </tbody>
+                    </table>
+                </div></div>
+              </div>
+
+            </div>
+    	
+    	
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="rec/sweetalert2.min.js"></script>
+    <script type="text/javascript">
+    	var bd = null,
+    		pantallaBotones = $("div#pBotones"),
+    		setBd = function(a){
+    			bd = a;
+    		},
+    		mostrarElementos = function(){
+    			pantallaBotones.html("");
+    			var n = 1;
+    			for(x in bd){
+    				pantallaBotones.append("<button id='elemento' data-num='"+(n-1)+"' class='btn btn-lg btn-default btn-block'><span><b>Elemento "+n+":</b>"+bd[x].t+"</span></button>");
+    				n++;
+    			}
+    		},
+    		mostrarAsientos = function(num){
+    			pantallaBotones.html("");
+    			var n = 1,
+                    datos = bd[num].a;
+    			for(x in datos){
+    				pantallaBotones.append("<button id='asiento' data-elemento='"+num+"' data-asiento='"+x+"' class='btn btn-lg btn-default btn-block'><span<b> "+n+". </b>"+datos[x].t+"</span></button>");
+    				n++;
+    			}
+    		},
+    		mostrarSubasientos = function(e,a){
+    			pantallaBotones.html("");
+    			var n = 1,
+                    datos = bd[e].a[a].s;
+                    console.log(datos)
+    			for(x in datos){
+    				pantallaBotones.append("<button id='subasiento' class='btn btn-lg btn-default btn-block'><span><b>"+datos[x][0]+":</b>"+datos[x][1]+"</span></button>");
+    				n++;
+    			}
+    		};
+
+    	$.getJSON("planContablePeruano.json", function(json) {
+		    setBd(json);
+		    mostrarElementos();
+		});
+
+        $("body").delegate('button#elemento','click',function(){
+            var d = $(this).data();
+            mostrarAsientos(d.num);
+        }).delegate('button#asiento','click',function(){
+            var d = $(this).data();
+            mostrarSubasientos(d.elemento,d.asiento);
+        }).delegate('button#subasiento','click',function(){
+            swal({
+                title: 'Ingresa cantidad a registrar',
+                html: '<p><input id="cant" required><hr><b><small>Registrar en:<br></small></b><select id="comp" required><option value=""></option><option value="mn">Mismo asiento</option><option value="na">Nuevo asiento</option><option value="ac">Asiento complementario al anterior</option></select>',
+                showCancelButton: true,
+                closeOnConfirm: false
+            },
+            function() {
+                console.log($('#cant').val(),$('#comp').val());
+                /*swal({
+                  html:
+                    'You entered: <strong>' +
+                     +
+                    '</strong>'
+                });*/
+            });
+        });
+
+
+
+		console.log(bd);
+    </script>
+  </body>
+</html>
